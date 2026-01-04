@@ -1,11 +1,14 @@
-from pygame import Event
 from settings import *
+from pygame import Event
+from Utils.Rectangle import Rectangle
 
 class Game ( ):
 	def __init__(self) -> None:
 		pygame.init()
-		self.screen = pygame.display.set_mode( (WINDOW_WIDTH, WINDOW_HEIGHT) )
 		pygame.display.set_caption('Pong II: Ball to the Wall')
+		self.screen = pygame.display.set_mode( (WINDOW_WIDTH, WINDOW_HEIGHT) )
+
+
 
 		self.clock = pygame.time.Clock()
 
@@ -21,7 +24,11 @@ class Game ( ):
 		for event in pygame.event.get():
 			self.running = not self.__is_time_to_quit(event)
 
+	def __set_background ( self ):
+		Rectangle((0, 0), (WINDOW_WIDTH, WINDOW_HEIGHT), COLORS['bg'], self.all_sprites)
+
 	def run ( self ):
+		self.__set_background()
 
 		while self.running:
 			dt = self.clock.tick() / 1000
