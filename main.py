@@ -1,6 +1,8 @@
+from GameObj import Player
 from settings import *
 from pygame import Event
 from Utils.Rectangle import Rectangle
+from GameObj.Player import Player
 
 class Game ( ):
 	def __init__(self) -> None:
@@ -25,10 +27,14 @@ class Game ( ):
 			self.running = not self.__is_time_to_quit(event)
 
 	def __set_background ( self ):
-		Rectangle((0, 0), (WINDOW_WIDTH, WINDOW_HEIGHT), COLORS['bg'], self.all_sprites)
+		Rectangle((WINDOW_WIDTH, WINDOW_HEIGHT), COLORS['bg'], self.all_sprites, topleft=(0,0))
+
+	def __set_player ( self ):
+		Player(self.all_sprites)
 
 	def run ( self ):
 		self.__set_background()
+		self.__set_player()
 
 		while self.running:
 			dt = self.clock.tick() / 1000
