@@ -3,6 +3,7 @@ from settings import *
 from pygame import Event
 from Utils.Rectangle import Rectangle
 from GameObj.Player import Player
+from GameObj.Opponent import Opps
 
 class Game ( ):
 	def __init__(self) -> None:
@@ -32,9 +33,13 @@ class Game ( ):
 	def __set_player ( self ):
 		Player(self.all_sprites)
 
+	def __set_opponent ( self ):
+		Opps(self.all_sprites)
+
 	def run ( self ):
 		self.__set_background()
 		self.__set_player()
+		self.__set_opponent()
 
 		while self.running:
 			dt = self.clock.tick() / 1000
