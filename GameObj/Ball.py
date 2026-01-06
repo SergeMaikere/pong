@@ -1,8 +1,7 @@
 from pygame import FRect, Surface
 from settings import *
 from pygame.sprite import Group
-from pygame.typing import ColorLike
-from Utils.Helper import pipe
+from Utils.Helper import get_random_vector
 
 class Ball ( pygame.sprite.Sprite ):
 	def __init__(self, *groups: Group) -> None:
@@ -12,7 +11,7 @@ class Ball ( pygame.sprite.Sprite ):
 		self.image: Surface = pygame.Surface((self.__dimensions), pygame.SRCALPHA)
 		self.rect: FRect = self.__get_rect()
 
-		self.direction = pygame.Vector2(1, -1)
+		self.direction = get_random_vector()
 
 
 	def __draw_circle ( self ):
@@ -35,17 +34,20 @@ class Ball ( pygame.sprite.Sprite ):
 
 	def __set_direction ( self ):
 		if self.__has_reached_top(): 
-			self.direction = self.direction.reflect(pygame.Vector2(0, 1))
 			self.rect.top = 0
+			self.direction = self.direction.reflect(pygame.Vector2(0, 1))
+
 		if self.__has_reached_bottom(): 
-			self.direction = self.direction.reflect(pygame.Vector2(0, -1))
 			self.rect.bottom = WINDOW_HEIGHT
+			self.direction = self.direction.reflect(pygame.Vector2(0, -1))
+
 		if self.__has_reached_left(): 
-			self.direction = self.direction.reflect(pygame.Vector2(1, 0))
 			self.rect.left = 0
+			self.direction = self.direction.reflect(pygame.Vector2(1, 0))
+
 		if self.__has_reached_right(): 
-			self.direction = self.direction.reflect(pygame.Vector2(-1, 0))
 			self.rect.right = WINDOW_WIDTH
+			self.direction = self.direction.reflect(pygame.Vector2(-1, 0))
 
 	def __move ( self, dt: float ):
 		self.rect.center += self.direction * SPEED['ball'] * dt 
