@@ -1,5 +1,4 @@
 from settings import *
-from typing import Callable
 from pygame import FRect, Surface
 from pygame.typing import ColorLike
 from pygame.sprite import Group
