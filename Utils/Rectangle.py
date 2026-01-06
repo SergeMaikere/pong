@@ -11,8 +11,8 @@ class Rectangle ( pygame.sprite.Sprite ):
 	def __init__(self, dimensions: tuple[int, int], color: ColorLike, *groups: Group, **rect_pos: tuple[float, float]) -> None:
 		super().__init__(*groups)
 
-		self.image = self.__set_surface(dimensions, color)
-		self.rect = self.__get_frect(self.image, **rect_pos)
+		self.image: Surface = self.__set_surface(dimensions, color)
+		self.rect: FRect = self.__get_frect(self.image, **rect_pos)
 
 	def __get_surface (self, dimensions: tuple[float, float]): 
 		return pygame.Surface(dimensions)

@@ -14,7 +14,7 @@ class Game ( ):
 
 
 		self.clock = pygame.time.Clock()
-
+ 
 		self.all_sprites = pygame.sprite.Group()
 
 		self.running = True
