@@ -1,6 +1,10 @@
+from GameObj import Player
 from settings import *
 from pygame import Event
 from Utils.Rectangle import Rectangle
+from GameObj.Player import Player
+from GameObj.Opponent import Opps
+from GameObj.Ball import Ball
 
 class Game ( ):
 	def __init__(self) -> None:
@@ -8,10 +12,8 @@ class Game ( ):
 		pygame.display.set_caption('Pong II: Ball to the Wall')
 		self.screen = pygame.display.set_mode( (WINDOW_WIDTH, WINDOW_HEIGHT) )
 
-
-
 		self.clock = pygame.time.Clock()
-
+ 
 		self.all_sprites = pygame.sprite.Group()
 
 		self.running = True
@@ -25,10 +27,22 @@ class Game ( ):
 			self.running = not self.__is_time_to_quit(event)
 
 	def __set_background ( self ):
-		Rectangle((0, 0), (WINDOW_WIDTH, WINDOW_HEIGHT), COLORS['bg'], self.all_sprites)
+		Rectangle((WINDOW_WIDTH, WINDOW_HEIGHT), COLORS['bg'], self.all_sprites, topleft=(0,0))
+
+	def __set_player ( self ):
+		Player(self.all_sprites)
+
+	def __set_opponent ( self ):
+		Opps(self.all_sprites)
+
+	def __set_ball ( self ):
+		Ball(self.all_sprites)
 
 	def run ( self ):
 		self.__set_background()
+		self.__set_player()
+		self.__set_opponent()
+		self.__set_ball()
 
 		while self.running:
 			dt = self.clock.tick() / 1000
