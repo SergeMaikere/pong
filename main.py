@@ -31,7 +31,7 @@ class Game ( ):
 		Rectangle((WINDOW_WIDTH, WINDOW_HEIGHT), COLORS['bg'], self.all_sprites, topleft=(0,0))
 
 	def __set_player ( self ):
-		Player(self.all_sprites)
+		Player(self.all_sprites, self.paddle_sprites)
 
 	def __set_opponent ( self ):
 		Opps(self.all_sprites, self.paddle_sprites)

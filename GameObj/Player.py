@@ -1,5 +1,5 @@
-from pygame.key import ScancodeWrapper
 from settings import *
+from pygame.key import ScancodeWrapper
 from pygame.sprite import Group
 from Utils.Paddle import Paddle
 
