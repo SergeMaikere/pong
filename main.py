@@ -12,8 +12,6 @@ class Game ( ):
 		pygame.display.set_caption('Pong II: Ball to the Wall')
 		self.screen = pygame.display.set_mode( (WINDOW_WIDTH, WINDOW_HEIGHT) )
 
-
-
 		self.clock = pygame.time.Clock()
  
 		self.all_sprites = pygame.sprite.Group()
