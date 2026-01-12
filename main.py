@@ -15,6 +15,7 @@ class Game ( ):
 		self.clock = pygame.time.Clock()
  
 		self.all_sprites = pygame.sprite.Group()
+		self.paddle_sprites = pygame.sprite.Group()
 
 		self.running = True
 
@@ -33,10 +34,10 @@ class Game ( ):
 		Player(self.all_sprites)
 
 	def __set_opponent ( self ):
-		Opps(self.all_sprites)
+		Opps(self.all_sprites, self.paddle_sprites)
 
 	def __set_ball ( self ):
-		Ball(self.all_sprites)
+		Ball(self.all_sprites, self.paddle_sprites)
 
 	def run ( self ):
 		self.__set_background()
