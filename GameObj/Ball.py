@@ -1,15 +1,20 @@
 from settings import *
 from pygame import FRect, Surface
 from pygame.sprite import Group
+from Utils.Paddle import Paddle
 from Utils.Helper import get_random_vector, pipe
 
 class Ball ( pygame.sprite.Sprite ):
 	def __init__(self, *groups: Group) -> None:
 		super().__init__(*groups)
 
+		self.paddle_sprites = groups[1]
+
 		self.__dimensions = SIZE['ball']
+		
 		self.image: Surface = pygame.Surface((self.__dimensions), pygame.SRCALPHA)
 		self.rect: FRect = pipe( self.__draw_circle, self.__get_rect )(self.image)
+		self.old_rect =  self.rect.copy()
 
 		self.direction = get_random_vector()
 
@@ -32,7 +37,7 @@ class Ball ( pygame.sprite.Sprite ):
 	def __has_reached_right ( self ): return self.rect.right > WINDOW_WIDTH
 
 
-	def __set_direction ( self ):
+	def __set_boundaries_bounce ( self ):
 		if self.__has_reached_top(): 
 			self.rect.top = 0
 			self.direction.y *= -1
@@ -49,9 +54,50 @@ class Ball ( pygame.sprite.Sprite ):
 			self.rect.right = WINDOW_WIDTH
 			self.direction.x *= -1
 
+	def __is_on_my_right ( self, paddle: Paddle ):
+		return self.rect.right >= paddle.rect.left and self.old_rect.right <= paddle.old_rect.left
+
+	def __is_on_my_left ( self, paddle: Paddle ):
+		return self.rect.left <= paddle.rect.right and self.old_rect.left >= paddle.old_rect.right
+
+	def __is_on_top_of_me ( self, paddle: Paddle ):
+		return self.rect.top <= paddle.rect.bottom and self.old_rect.top >= paddle.old_rect.bottom
+
+	def __is_under_me ( self, paddle: Paddle ):
+		return self.rect.bottom >= paddle.rect.top and self.old_rect.bottom <= paddle.old_rect.top
+
+
+	def __paddle_collision_handler ( self, direction: str ):
+		for paddle in self.paddle_sprites:
+			if paddle.rect.colliderect(self.rect):
+				if direction == 'horizontal':
+					if self.__is_on_my_right(paddle):
+						self.rect.right = paddle.rect.left
+						self.direction.x *= -1
+
+					if self.__is_on_my_left(paddle):
+						self.rect.left = paddle.rect.right
+						self.direction.x *= -1
+
+
+				if direction == 'vertical':
+					if self.__is_on_top_of_me(paddle):
+						self.rect.top = paddle.rect.bottom
+						self.direction.y *= -1
+
+					if self.__is_under_me(paddle):
+						self.rect.bottom = paddle.rect.top
+						self.direction.y *= -1
+
+
 	def __move ( self, dt: float ):
-		self.rect.center += self.direction * SPEED['ball'] * dt 
+		self.rect.x += self.direction.x * SPEED['ball'] * dt 
+		self.__paddle_collision_handler('horizontal')
+
+		self.rect.y += self.direction.y * SPEED['ball'] * dt 
+		self.__paddle_collision_handler('vertical')
+
 
 	def update ( self, dt: float ):
-		self.__set_direction()
+		self.__set_boundaries_bounce()
 		self.__move(dt)
