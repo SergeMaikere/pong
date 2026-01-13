@@ -1,3 +1,4 @@
+from typing import Callable, Literal
 from settings import *
 from pygame import FRect, Surface
 from pygame.sprite import Group
@@ -5,7 +6,7 @@ from Utils.Paddle import Paddle
 from Utils.Helper import get_random_vector, pipe
 
 class Ball ( pygame.sprite.Sprite ):
-	def __init__(self, *groups: Group) -> None:
+	def __init__(self, update_score: Callable[[Literal['player', 'opponent']], None], *groups: Group) -> None:
 		super().__init__(*groups)
 
 		self.paddle_sprites = groups[1]
@@ -17,6 +18,8 @@ class Ball ( pygame.sprite.Sprite ):
 		self.old_rect =  self.rect.copy()
 
 		self.direction = get_random_vector()
+
+		self.update_score = update_score
 
 
 	def __draw_circle ( self, image: Surface ):
@@ -49,10 +52,12 @@ class Ball ( pygame.sprite.Sprite ):
 		if self.__has_reached_left(): 
 			self.rect.left = 0
 			self.direction.x *= -1
+			self.update_score('opponent')
 
 		if self.__has_reached_right(): 
 			self.rect.right = WINDOW_WIDTH
 			self.direction.x *= -1
+			self.update_score('player')
 
 	def __is_on_my_right ( self, paddle: Paddle ):
 		return self.rect.right >= paddle.rect.left and self.old_rect.right <= paddle.old_rect.left

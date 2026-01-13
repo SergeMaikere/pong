@@ -32,6 +32,8 @@ class Game ( ):
 		except:
 			return { 'player': 0, 'opponent': 0 }
 
+	def update_score ( self, whom: Literal['player', 'opponent'] ): self.score[whom] += 1
+
 	def __is_time_to_quit ( self, event: Event ):
 		return event.type == pygame.QUIT
 
@@ -46,7 +48,7 @@ class Game ( ):
 		self.player = Player(self.all_sprites, self.paddle_sprites)
 
 	def __set_ball ( self ):
-		self.ball = Ball(self.all_sprites, self.paddle_sprites)
+		self.ball = Ball(self.update_score, self.all_sprites, self.paddle_sprites)
 
 	def __set_opponent ( self ):
 		self.opponent = Opps(self.ball, self.all_sprites, self.paddle_sprites)
