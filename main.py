@@ -1,5 +1,7 @@
-from GameObj import Player
+from typing import Literal
 from settings import *
+import json
+from GameObj import Player
 from pygame import Event
 from Utils.Rectangle import Rectangle
 from GameObj.Player import Player
@@ -17,8 +19,18 @@ class Game ( ):
 		self.all_sprites = pygame.sprite.Group()
 		self.paddle_sprites = pygame.sprite.Group()
 
+		self.score = self.__get_score()
+		self.font = pygame.font.Font(None, 160)
+
 		self.running = True
 
+
+	def __get_score ( self ):
+		try:
+			with open(join('data', 'score.txt')) as score_file:
+				return json.load(score_file)
+		except:
+			return { 'player': 0, 'opponent': 0 }
 
 	def __is_time_to_quit ( self, event: Event ):
 		return event.type == pygame.QUIT
@@ -39,6 +51,19 @@ class Game ( ):
 	def __set_opponent ( self ):
 		self.opponent = Opps(self.ball, self.all_sprites, self.paddle_sprites)
 
+	def __display_individual_score ( self, whom: Literal['player', 'opponent'] ):
+		score_surface = self.font.render( str(self.score[whom]), True, COLORS['bg details'] )
+		score_rect = score_surface.get_frect( center=(WINDOW_WIDTH/2 + (100 if whom == 'player' else -100), WINDOW_HEIGHT/2) )
+		self.screen.blit(score_surface, score_rect)
+
+	def __display_line ( self ):
+		pygame.draw.line(self.screen, COLORS['bg details'], (WINDOW_WIDTH/2, 0), (WINDOW_WIDTH/2, WINDOW_HEIGHT), 5)
+
+	def __display_score ( self ):
+		self.__display_individual_score('player')
+		self.__display_individual_score('opponent')
+		self.__display_line()
+
 
 	def run ( self ):
 
@@ -56,6 +81,8 @@ class Game ( ):
 
 			self.all_sprites.draw(self.screen)
 
+			self.__display_score()
+			
 			pygame.display.update()
 
 		pygame.quit()

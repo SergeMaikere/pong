@@ -10,5 +10,6 @@ COLORS = {
     'paddle shadow': '#b12521',
     'ball': '#ee622c',
     'ball shadow': '#c14f24',
-    'bg': '#002633'
+    'bg': '#002633',
+    'bg details': '#004a63'
 }
