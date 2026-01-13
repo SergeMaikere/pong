@@ -55,16 +55,16 @@ class Ball ( pygame.sprite.Sprite ):
 			self.direction.x *= -1
 
 	def __is_on_my_right ( self, paddle: Paddle ):
-		return self.rect.right > paddle.rect.left and self.old_rect.right <= paddle.old_rect.left
+		return self.rect.right >= paddle.rect.left and self.old_rect.right <= paddle.old_rect.left
 
 	def __is_on_my_left ( self, paddle: Paddle ):
-		return self.rect.left < paddle.rect.right and self.old_rect.left >= paddle.old_rect.right
+		return self.rect.left <= paddle.rect.right and self.old_rect.left >= paddle.old_rect.right
 
 	def __is_on_top_of_me ( self, paddle: Paddle ):
-		return self.rect.top < paddle.rect.bottom and self.old_rect.top >= paddle.old_rect.bottom
+		return self.rect.top <= paddle.rect.bottom and self.old_rect.top >= paddle.old_rect.bottom
 
 	def __is_under_me ( self, paddle: Paddle ):
-		return self.rect.bottom > paddle.rect.top and self.old_rect.bottom <= paddle.old_rect.top
+		return self.rect.bottom >= paddle.rect.top and self.old_rect.bottom <= paddle.old_rect.top
 
 
 	def __paddle_collision_handler ( self, direction: str ):
@@ -83,12 +83,11 @@ class Ball ( pygame.sprite.Sprite ):
 				if direction == 'vertical':
 					if self.__is_on_top_of_me(paddle):
 						self.rect.top = paddle.rect.bottom
-						self.direction.x *= -1
+						self.direction.y *= -1
 
 					if self.__is_under_me(paddle):
 						self.rect.bottom = paddle.rect.top
-						self.direction.x *= -1
-
+						self.direction.y *= -1
 
 
 	def __move ( self, dt: float ):

@@ -1,5 +1,4 @@
 from settings import *
-from pygame.key import ScancodeWrapper
 from pygame.sprite import Group
 from Utils.Paddle import Paddle
 
@@ -9,12 +8,7 @@ class Player ( Paddle ):
 
 		self.speed = SPEED['player']
 
-	def __get_direction ( self, keys: ScancodeWrapper ):
+	def _get_direction ( self ):
+		keys = pygame.key.get_pressed()
 		self.direction.y = int(keys[pygame.K_DOWN]) - int(keys[pygame.K_UP])
 
-
-	def update ( self, dt: float ):
-		self._update_old_rect()
-		self.__get_direction(pygame.key.get_pressed())
-		self._stay_inside_boundaries()
-		self._move(dt)

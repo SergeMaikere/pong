@@ -26,24 +26,26 @@ class Game ( ):
 	def __event_loop_handler ( self ):
 		for event in pygame.event.get():
 			self.running = not self.__is_time_to_quit(event)
-
+		
 	def __set_background ( self ):
-		Rectangle((WINDOW_WIDTH, WINDOW_HEIGHT), COLORS['bg'], self.all_sprites, topleft=(0,0))
+		self.background = Rectangle((WINDOW_WIDTH, WINDOW_HEIGHT), COLORS['bg'], self.all_sprites, topleft=(0,0))
 
 	def __set_player ( self ):
-		Player(self.all_sprites, self.paddle_sprites)
-
-	def __set_opponent ( self ):
-		Opps(self.all_sprites, self.paddle_sprites)
+		self.player = Player(self.all_sprites, self.paddle_sprites)
 
 	def __set_ball ( self ):
-		Ball(self.all_sprites, self.paddle_sprites)
+		self.ball = Ball(self.all_sprites, self.paddle_sprites)
+
+	def __set_opponent ( self ):
+		self.opponent = Opps(self.ball, self.all_sprites, self.paddle_sprites)
+
 
 	def run ( self ):
+
 		self.__set_background()
+		self.__set_ball()
 		self.__set_player()
 		self.__set_opponent()
-		self.__set_ball()
 
 		while self.running:
 			dt = self.clock.tick() / 1000
