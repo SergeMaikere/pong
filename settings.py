@@ -1,3 +1,4 @@
+from typing import TypedDict
 import pygame
 from os.path import join
 
@@ -13,3 +14,7 @@ COLORS = {
     'bg': '#002633',
     'bg details': '#004a63'
 }
+
+class Score ( TypedDict ):
+    player: int
+    opponent: int

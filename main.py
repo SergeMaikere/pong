@@ -1,4 +1,6 @@
 from typing import Literal
+from GameObj.Middle_line import Middle_Line
+from GameObj.Score_Number import Score_Number
 from settings import *
 import json
 from GameObj import Player
@@ -25,7 +27,7 @@ class Game ( ):
 		self.running = True
 
 
-	def __get_score ( self ):
+	def __get_score ( self ) -> Score:
 		try:
 			with open(join('data', 'score.txt')) as score_file:
 				return json.load(score_file)
@@ -33,6 +35,8 @@ class Game ( ):
 			return { 'player': 0, 'opponent': 0 }
 
 	def update_score ( self, whom: Literal['player', 'opponent'] ): self.score[whom] += 1
+
+	def get_score ( self ): return self.score
 
 	def __is_time_to_quit ( self, event: Event ):
 		return event.type == pygame.QUIT
@@ -53,23 +57,16 @@ class Game ( ):
 	def __set_opponent ( self ):
 		self.opponent = Opps(self.ball, self.all_sprites, self.paddle_sprites)
 
-	def __display_individual_score ( self, whom: Literal['player', 'opponent'] ):
-		score_surface = self.font.render( str(self.score[whom]), True, COLORS['bg details'] )
-		score_rect = score_surface.get_frect( center=(WINDOW_WIDTH/2 + (100 if whom == 'player' else -100), WINDOW_HEIGHT/2) )
-		self.screen.blit(score_surface, score_rect)
-
-	def __display_line ( self ):
-		pygame.draw.line(self.screen, COLORS['bg details'], (WINDOW_WIDTH/2, 0), (WINDOW_WIDTH/2, WINDOW_HEIGHT), 5)
-
-	def __display_score ( self ):
-		self.__display_individual_score('player')
-		self.__display_individual_score('opponent')
-		self.__display_line()
+	def __set_score ( self ):
+		Score_Number(self.score, self.get_score, 'player', self.all_sprites)
+		Score_Number(self.score, self.get_score, 'opponent', self.all_sprites)
+		Middle_Line(self.all_sprites)
 
 
 	def run ( self ):
 
 		self.__set_background()
+		self.__set_score()
 		self.__set_ball()
 		self.__set_player()
 		self.__set_opponent()
@@ -83,7 +80,7 @@ class Game ( ):
 
 			self.all_sprites.draw(self.screen)
 
-			self.__display_score()
+			# self.__display_score()
 			
 			pygame.display.update()
 

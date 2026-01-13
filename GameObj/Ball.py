@@ -20,6 +20,10 @@ class Ball ( pygame.sprite.Sprite ):
 		self.direction = get_random_vector()
 
 		self.update_score = update_score
+		
+		self.can_play = True
+		self.cooldown = 1000
+		self.start_cooldown = 0
 
 
 	def __draw_circle ( self, image: Surface ):
@@ -51,13 +55,17 @@ class Ball ( pygame.sprite.Sprite ):
 
 		if self.__has_reached_left(): 
 			self.rect.left = 0
-			self.direction.x *= -1
-			self.update_score('opponent')
+			self.__scoring_handler('opponent')
 
 		if self.__has_reached_right(): 
 			self.rect.right = WINDOW_WIDTH
-			self.direction.x *= -1
-			self.update_score('player')
+			self.__scoring_handler('player')
+
+	def __scoring_handler ( self, whom: Literal[ 'player', 'opponent' ] ):
+		self.can_play = False
+		self.start_cooldown = pygame.time.get_ticks()
+		self.rect.center = (WINDOW_WIDTH/2, WINDOW_HEIGHT/2)
+		self.update_score(whom)
 
 	def __is_on_my_right ( self, paddle: Paddle ):
 		return self.rect.right >= paddle.rect.left and self.old_rect.right <= paddle.old_rect.left
@@ -94,6 +102,12 @@ class Ball ( pygame.sprite.Sprite ):
 						self.rect.bottom = paddle.rect.top
 						self.direction.y *= -1
 
+	def __can_play_now ( self ):
+		current = pygame.time.get_ticks()
+		if current - self.start_cooldown >= self.cooldown:
+			self.direction = get_random_vector()
+			self.can_play = True
+
 
 	def __move ( self, dt: float ):
 		self.rect.x += self.direction.x * SPEED['ball'] * dt 
@@ -104,5 +118,6 @@ class Ball ( pygame.sprite.Sprite ):
 
 
 	def update ( self, dt: float ):
+		if not self.can_play: return self.__can_play_now()
 		self.__set_boundaries_bounce()
 		self.__move(dt)
