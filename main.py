@@ -1,5 +1,9 @@
-from GameObj import Player
+from typing import Literal
+from GameObj.Middle_line import Middle_Line
+from GameObj.Score_Number import Score_Number
 from settings import *
+import json
+from GameObj import Player
 from pygame import Event
 from Utils.Rectangle import Rectangle
 from GameObj.Player import Player
@@ -17,15 +21,35 @@ class Game ( ):
 		self.all_sprites = pygame.sprite.Group()
 		self.paddle_sprites = pygame.sprite.Group()
 
+		self.score = self.__get_score()
+		self.font = pygame.font.Font(None, 160)
+
 		self.running = True
 
+
+	def __get_score ( self ) -> Score:
+		try:
+			with open(join('data', 'score.txt')) as score_file:
+				return json.load(score_file)
+		except:
+			return { 'player': 0, 'opponent': 0 }
+
+	def update_score ( self, whom: Literal['player', 'opponent'] ): self.score[whom] += 1
+
+	def get_score ( self ): return self.score
+
+	def __save_score ( self ):
+		with open( join('data', 'score.txt'), 'w' ) as score_file:
+			json.dump(self.score, score_file)
 
 	def __is_time_to_quit ( self, event: Event ):
 		return event.type == pygame.QUIT
 
 	def __event_loop_handler ( self ):
 		for event in pygame.event.get():
-			self.running = not self.__is_time_to_quit(event)
+			if self.__is_time_to_quit(event):
+				self.__save_score()
+				self.running = False
 		
 	def __set_background ( self ):
 		self.background = Rectangle((WINDOW_WIDTH, WINDOW_HEIGHT), COLORS['bg'], self.all_sprites, topleft=(0,0))
@@ -34,15 +58,21 @@ class Game ( ):
 		self.player = Player(self.all_sprites, self.paddle_sprites)
 
 	def __set_ball ( self ):
-		self.ball = Ball(self.all_sprites, self.paddle_sprites)
+		self.ball = Ball(self.update_score, self.all_sprites, self.paddle_sprites)
 
 	def __set_opponent ( self ):
 		self.opponent = Opps(self.ball, self.all_sprites, self.paddle_sprites)
+
+	def __set_score ( self ):
+		Score_Number(self.score, self.get_score, 'player', self.all_sprites)
+		Score_Number(self.score, self.get_score, 'opponent', self.all_sprites)
+		Middle_Line(self.all_sprites)
 
 
 	def run ( self ):
 
 		self.__set_background()
+		self.__set_score()
 		self.__set_ball()
 		self.__set_player()
 		self.__set_opponent()
@@ -55,7 +85,7 @@ class Game ( ):
 			self.all_sprites.update(dt)
 
 			self.all_sprites.draw(self.screen)
-
+			
 			pygame.display.update()
 
 		pygame.quit()

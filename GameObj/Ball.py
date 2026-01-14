@@ -1,11 +1,12 @@
 from settings import *
+from typing import Callable, Literal
 from pygame import FRect, Surface
 from pygame.sprite import Group
 from Utils.Paddle import Paddle
 from Utils.Helper import get_random_vector, pipe
 
 class Ball ( pygame.sprite.Sprite ):
-	def __init__(self, *groups: Group) -> None:
+	def __init__(self, update_score: Callable[[Literal['player', 'opponent']], None], *groups: Group) -> None:
 		super().__init__(*groups)
 
 		self.paddle_sprites = groups[1]
@@ -17,6 +18,12 @@ class Ball ( pygame.sprite.Sprite ):
 		self.old_rect =  self.rect.copy()
 
 		self.direction = get_random_vector()
+
+		self.update_score = update_score
+		
+		self.can_play = True
+		self.cooldown = 1000
+		self.start_cooldown = 0
 
 
 	def __draw_circle ( self, image: Surface ):
@@ -48,11 +55,17 @@ class Ball ( pygame.sprite.Sprite ):
 
 		if self.__has_reached_left(): 
 			self.rect.left = 0
-			self.direction.x *= -1
+			self.__scoring_handler('player')
 
 		if self.__has_reached_right(): 
 			self.rect.right = WINDOW_WIDTH
-			self.direction.x *= -1
+			self.__scoring_handler('opponent')
+
+	def __scoring_handler ( self, whom: Literal[ 'player', 'opponent' ] ):
+		self.can_play = False
+		self.start_cooldown = pygame.time.get_ticks()
+		self.rect.center = (WINDOW_WIDTH/2, WINDOW_HEIGHT/2)
+		self.update_score(whom)
 
 	def __is_on_my_right ( self, paddle: Paddle ):
 		return self.rect.right >= paddle.rect.left and self.old_rect.right <= paddle.old_rect.left
@@ -89,6 +102,13 @@ class Ball ( pygame.sprite.Sprite ):
 						self.rect.bottom = paddle.rect.top
 						self.direction.y *= -1
 
+	def __yes_you_can_play_now ( self, current: int ): return current - self.start_cooldown >= self.cooldown
+
+	def __can_i_play_now ( self ):
+		if self.__yes_you_can_play_now(pygame.time.get_ticks()):
+			self.can_play = True
+			self.direction = get_random_vector()
+
 
 	def __move ( self, dt: float ):
 		self.rect.x += self.direction.x * SPEED['ball'] * dt 
@@ -99,5 +119,6 @@ class Ball ( pygame.sprite.Sprite ):
 
 
 	def update ( self, dt: float ):
+		if not self.can_play: return self.__can_i_play_now()
 		self.__set_boundaries_bounce()
 		self.__move(dt)
