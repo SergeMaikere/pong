@@ -55,11 +55,11 @@ class Ball ( pygame.sprite.Sprite ):
 
 		if self.__has_reached_left(): 
 			self.rect.left = 0
-			self.__scoring_handler('opponent')
+			self.__scoring_handler('player')
 
 		if self.__has_reached_right(): 
 			self.rect.right = WINDOW_WIDTH
-			self.__scoring_handler('player')
+			self.__scoring_handler('opponent')
 
 	def __scoring_handler ( self, whom: Literal[ 'player', 'opponent' ] ):
 		self.can_play = False

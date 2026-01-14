@@ -38,12 +38,18 @@ class Game ( ):
 
 	def get_score ( self ): return self.score
 
+	def __save_score ( self ):
+		with open( join('data', 'score.txt'), 'w' ) as score_file:
+			json.dump(self.score, score_file)
+
 	def __is_time_to_quit ( self, event: Event ):
 		return event.type == pygame.QUIT
 
 	def __event_loop_handler ( self ):
 		for event in pygame.event.get():
-			self.running = not self.__is_time_to_quit(event)
+			if self.__is_time_to_quit(event):
+				self.__save_score()
+				self.running = False
 		
 	def __set_background ( self ):
 		self.background = Rectangle((WINDOW_WIDTH, WINDOW_HEIGHT), COLORS['bg'], self.all_sprites, topleft=(0,0))
@@ -79,8 +85,6 @@ class Game ( ):
 			self.all_sprites.update(dt)
 
 			self.all_sprites.draw(self.screen)
-
-			# self.__display_score()
 			
 			pygame.display.update()
 
