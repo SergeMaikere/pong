@@ -1,5 +1,5 @@
-from typing import Callable, Literal
 from settings import *
+from typing import Callable, Literal
 from pygame import FRect, Surface
 from pygame.sprite import Group
 from Utils.Paddle import Paddle
@@ -102,11 +102,12 @@ class Ball ( pygame.sprite.Sprite ):
 						self.rect.bottom = paddle.rect.top
 						self.direction.y *= -1
 
-	def __can_play_now ( self ):
-		current = pygame.time.get_ticks()
-		if current - self.start_cooldown >= self.cooldown:
-			self.direction = get_random_vector()
+	def __yes_you_can_play_now ( self, current: int ): return current - self.start_cooldown >= self.cooldown
+
+	def __can_i_play_now ( self ):
+		if self.__yes_you_can_play_now(pygame.time.get_ticks()):
 			self.can_play = True
+			self.direction = get_random_vector()
 
 
 	def __move ( self, dt: float ):
@@ -118,6 +119,6 @@ class Ball ( pygame.sprite.Sprite ):
 
 
 	def update ( self, dt: float ):
-		if not self.can_play: return self.__can_play_now()
+		if not self.can_play: return self.__can_i_play_now()
 		self.__set_boundaries_bounce()
 		self.__move(dt)
