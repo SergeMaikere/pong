@@ -5,8 +5,8 @@ from Utils.Shape import Shape
 
 class Paddle ( Shape ):
 	def __init__(self, dimensions: tuple[int, int], color: ColorLike, *groups: Group, **rect_pos: tuple[float, float]) -> None:
-		super().__init__('rectangle', dimensions, color, *groups, **rect_pos)
-				
+		super().__init__('rectangle', dimensions, color, *groups, shadowed = True, **rect_pos)
+		
 		self.direction = pygame.Vector2()
 		self.speed = 100
 		self.old_rect = self.rect.copy()

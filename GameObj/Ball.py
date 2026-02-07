@@ -11,7 +11,7 @@ UpdateScore = Callable[[Literal['player', 'opponent']], None]
 
 class Ball ( Shape ):
 	def __init__(self, update_score: UpdateScore, dimensions: tuple[int, int], color: ColorLike, *groups: Group) -> None:
-		super().__init__('circle', dimensions, color, *groups, center = (WINDOW_WIDTH/2, WINDOW_HEIGHT/2) )
+		super().__init__('circle', dimensions, color, groups[0], shadowed = True, center = (WINDOW_WIDTH/2, WINDOW_HEIGHT/2) )
 
 		self.paddle_sprites = groups[1]
 		

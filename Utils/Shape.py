@@ -11,15 +11,17 @@ ShapeType = Literal[ 'rectangle', 'circle' ]
 Dimensions = tuple[int, int]
 
 class Shape ( pygame.sprite.Sprite ):
-	def __init__(self, shape_type: ShapeType, dimensions: Dimensions, color: ColorLike, *groups: Group, **rect_pos: tuple[float, float]) -> None:
+	def __init__(self, shape_type: ShapeType, dimensions: Dimensions, color: ColorLike, *groups: Group, shadowed: bool = False, **rect_pos: tuple[float, float]) -> None:
 		super().__init__(*groups)
 
+		self.shadowed = shadowed
 		self.shape_type = shape_type
-		self.shadowed = True
 		
 		self.image: Surface = self._set_surface(dimensions, color)
 		self.rect: FRect = self.image.get_frect(**rect_pos)
 
+		self.shadow_image: Surface | None = self.__set_shadow_surface() if self.shadowed else None
+		self.shadow_rect: FRect | None = self.rect.copy() if self.shadowed else None
 
 	def __make_surface ( self, dims: Dimensions ) -> Surface: 
 		return pygame.Surface(dims, pygame.SRCALPHA)
@@ -50,5 +52,21 @@ class Shape ( pygame.sprite.Sprite ):
 		)(dimensions)
 
 	def _set_surface ( self, dimensions: Dimensions, color: ColorLike ) -> Surface:
-		if self.shape_type == 'rectangle': return self.__make_image_rectangle(dimensions, color)
-		if self.shape_type == 'circle': return self.__make_image_circle(dimensions, color)
+		if self.shape_type == 'rectangle': 
+			return self.__make_image_rectangle(dimensions, color) 
+		else:
+			return self.__make_image_circle(dimensions, color)
+
+	def __get_shadow_color ( self ): return COLORS['paddle shadow'] if self.shape_type == 'rectangle' else COLORS['ball shadow']
+
+	def __set_shadow_surface ( self ) -> Surface: return self.__set_surface_color(self.__get_shadow_color(), self.image.copy())
+
+	def __set_shadow_pos ( self ):
+
+		if self.shadow_rect:
+			self.shadow_rect.x = self.rect.x + 5
+			self.shadow_rect.y = self.rect.y + 5
+
+	def _get_shadow_data ( self ) -> tuple[Surface | None, FRect | None]:
+		self.__set_shadow_pos()
+		return ( self.shadow_image, self.shadow_rect )
