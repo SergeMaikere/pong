@@ -9,7 +9,9 @@ class All_Sprites ( pygame.sprite.Group ):
 	def draw ( self ):
 		for sprite in self:
 			if hasattr(sprite, 'shadowed') and sprite.shadowed: 
-				shadow_image, shadow_rect = sprite._get_shadow_data()
-				self.screen.blit(shadow_image, shadow_rect.topleft)
+
+				shadow_images, shadow_rect = sprite._get_shadow_data()
+				for i, shadow_image in enumerate(shadow_images):
+					self.screen.blit(shadow_image, shadow_rect.topleft + pygame.Vector2(i, i))
 
 			self.screen.blit( sprite.image, sprite.rect.topleft )

@@ -21,9 +21,9 @@ class Ball ( Shape ):
 
 		self.update_score = update_score
 		
-		self.can_play = True
+		self.can_play = False
 		self.cooldown = 1000
-		self.start_cooldown = 0
+		self.start_cooldown = pygame.time.get_ticks()
 
 
 	def __has_reached_top ( self ): return self.rect.top < 0
