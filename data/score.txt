@@ -1,1 +1,1 @@
-{"player": 2, "opponent": 15}
+{"player": 2, "opponent": 21}

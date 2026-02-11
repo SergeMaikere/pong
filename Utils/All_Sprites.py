@@ -11,4 +11,5 @@ class All_Sprites ( pygame.sprite.Group ):
 			if hasattr(sprite, 'shadowed') and sprite.shadowed: 
 				shadow_image, shadow_rect = sprite._get_shadow_data()
 				self.screen.blit(shadow_image, shadow_rect.topleft)
+
 			self.screen.blit( sprite.image, sprite.rect.topleft )

@@ -20,46 +20,42 @@ class Shape ( pygame.sprite.Sprite ):
 		self.image: Surface = self._set_surface(dimensions, color)
 		self.rect: FRect = self.image.get_frect(**rect_pos)
 
-		self.shadow_image: Surface | None = self.__set_shadow_surface() if self.shadowed else None
-		self.shadow_rect: FRect | None = self.rect.copy() if self.shadowed else None
+		self.shadow_image = self.__set_shadow_surface(dimensions) if self.shadowed else None
+		self.shadow_rect = self.rect.copy() if self.shadowed else None
 
-	def __make_surface ( self, dims: Dimensions ) -> Surface: 
-		return pygame.Surface(dims, pygame.SRCALPHA)
+	def __make_surface ( self, dims: Dimensions ) -> Surface: return pygame.Surface(dims, pygame.SRCALPHA)
 
-	def __set_surface_color ( self, color, surface ) -> Surface:
+	def __set_surface_color ( self, color: ColorLike, surface: Surface ) -> Surface:
+		if self.shape_type == 'circle': return surface
+
 		surface.fill(color)
 		return surface
 
-	def __draw_circle ( self, dimensions: Dimensions, image: Surface ) -> Surface:
+	def __draw_circle ( self, dimensions: Dimensions, color: ColorLike, image: Surface ) -> Surface:
+		if self.shape_type == 'rectangle': return image
+
 		pygame.draw.circle(
 			image, 
-			COLORS['ball'], 
+			color, 
 			pygame.Vector2(dimensions) / 2,
 			dimensions[0] / 2
 		)
 		return image
 
-	def __make_image_rectangle ( self, dimensions: Dimensions, color: ColorLike ) -> Surface:
-		return pipe( 
-			self.__make_surface, 
-			partial(self.__set_surface_color, color)
-		)(dimensions)
-
-	def __make_image_circle ( self, dimensions: Dimensions, color: ColorLike ) -> Surface:
-		return pipe(
-			self.__make_surface,
-			partial(self.__draw_circle, dimensions)
-		)(dimensions)
 
 	def _set_surface ( self, dimensions: Dimensions, color: ColorLike ) -> Surface:
-		if self.shape_type == 'rectangle': 
-			return self.__make_image_rectangle(dimensions, color) 
-		else:
-			return self.__make_image_circle(dimensions, color)
+		return pipe(
+			self.__make_surface,
+			partial(self.__set_surface_color, color),
+			partial(self.__draw_circle, dimensions, color)
+		)(dimensions)
 
-	def __get_shadow_color ( self ): return COLORS['paddle shadow'] if self.shape_type == 'rectangle' else COLORS['ball shadow']
-
-	def __set_shadow_surface ( self ) -> Surface: return self.__set_surface_color(self.__get_shadow_color(), self.image.copy())
+	def __set_shadow_surface ( self, dimensions: Dimensions ) -> Surface: 
+		return pipe(
+			self.__make_surface,
+			partial(self.__set_surface_color, COLORS['paddle shadow']),
+			partial(self.__draw_circle, dimensions, COLORS['ball shadow'])
+		)(dimensions)
 
 	def __set_shadow_pos ( self ):
 
