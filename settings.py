@@ -1,0 +1,21 @@
+from typing import TypedDict
+import pygame
+from os.path import join
+
+WINDOW_WIDTH, WINDOW_HEIGHT = 1280, 720 
+SIZE = {'paddle': (40,100), 'ball': (30,30)}
+POS = {'player': (WINDOW_WIDTH - 50, WINDOW_HEIGHT / 2), 'opponent': (50, WINDOW_HEIGHT / 2)}
+SPEED = {'player': 500, 'opponent': 250, 'ball': 450}
+COLORS = {
+    'paddle': '#ee322c',
+    'ball': '#ee622c',
+    'shadow': '#002000',
+    'bg': '#002633',
+    'bg details': '#004a63'
+}
+
+Dimensions = tuple[int, int]
+
+class Score ( TypedDict ):
+    player: int
+    opponent: int
