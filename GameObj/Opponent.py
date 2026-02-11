@@ -11,4 +11,8 @@ class Opps ( Paddle ):
 		self.ball = ball
 
 	def _get_direction(self):
-		self.direction.y = 1 if self.rect.centery < self.ball.rect.centery else -1
+		if self.ball.can_play: 
+			self.direction.y = 1 if self.rect.centery < self.ball.rect.centery else -1
+		else:
+			self.direction.y = 0
+

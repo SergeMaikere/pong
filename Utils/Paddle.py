@@ -1,7 +1,10 @@
 from settings import *
+from functools import partial
+from pygame import Surface
 from pygame.sprite import Group
 from pygame.typing import ColorLike
 from Utils.Shape import Shape
+from Utils.Helper import pipe
 
 class Paddle ( Shape ):
 	def __init__(self, dimensions: tuple[int, int], color: ColorLike, *groups: Group, **rect_pos: tuple[float, float]) -> None:
@@ -10,6 +13,15 @@ class Paddle ( Shape ):
 		self.direction = pygame.Vector2()
 		self.speed = 100
 		self.old_rect = self.rect.copy()
+
+	def _set_surface(self, dimensions: tuple[int, int], color: ColorLike) -> Surface:
+		return pipe(
+			self._make_surface,
+			partial(self._draw_rectangle, color)
+		)(dimensions)
+
+	def _set_shadow_surface ( self, dimensions: Dimensions ) -> Surface: 
+		return self._draw_rectangle( COLORS['shadow'], self.image.copy() )
 
 	def _update_old_rect ( self ): self.old_rect.y = self.rect.y
 
