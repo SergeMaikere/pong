@@ -1,14 +1,15 @@
-from typing import Literal
-from GameObj.Middle_line import Middle_Line
-from GameObj.Score_Number import Score_Number
 from settings import *
 import json
-from GameObj import Player
 from pygame import Event
-from Utils.Rectangle import Rectangle
+from typing import Literal
+from Utils.All_Sprites import All_Sprites
+from Utils.Shape import Shape
+from GameObj import Player
 from GameObj.Player import Player
 from GameObj.Opponent import Opps
 from GameObj.Ball import Ball
+from GameObj.Middle_line import Middle_Line
+from GameObj.Score_Number import Score_Number
 
 class Game ( ):
 	def __init__(self) -> None:
@@ -18,7 +19,7 @@ class Game ( ):
 
 		self.clock = pygame.time.Clock()
  
-		self.all_sprites = pygame.sprite.Group()
+		self.all_sprites = All_Sprites()
 		self.paddle_sprites = pygame.sprite.Group()
 
 		self.score = self.__get_score()
@@ -52,13 +53,13 @@ class Game ( ):
 				self.running = False
 		
 	def __set_background ( self ):
-		self.background = Rectangle((WINDOW_WIDTH, WINDOW_HEIGHT), COLORS['bg'], self.all_sprites, topleft=(0,0))
+		self.background = Shape('rectangle', (WINDOW_WIDTH, WINDOW_HEIGHT), COLORS['bg'], self.all_sprites, topleft=(0,0))
 
 	def __set_player ( self ):
 		self.player = Player(self.all_sprites, self.paddle_sprites)
 
 	def __set_ball ( self ):
-		self.ball = Ball(self.update_score, self.all_sprites, self.paddle_sprites)
+		self.ball = Ball(self.update_score, SIZE['ball'], COLORS['ball'], self.all_sprites, self.paddle_sprites)
 
 	def __set_opponent ( self ):
 		self.opponent = Opps(self.ball, self.all_sprites, self.paddle_sprites)
@@ -84,7 +85,7 @@ class Game ( ):
 
 			self.all_sprites.update(dt)
 
-			self.all_sprites.draw(self.screen)
+			self.all_sprites.draw()
 			
 			pygame.display.update()
 
@@ -94,3 +95,4 @@ class Game ( ):
 if __name__ == '__main__':
 	new_game = Game()
 	new_game.run()
+	
