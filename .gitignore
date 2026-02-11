@@ -1,5 +1,5 @@
 # score file
-data/
+data/score.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
